@@ -1,30 +1,21 @@
 var axios = require('axios');
 
-async function sendConfirmation(phonenumber){
+const dId =  Array.from(Array(16), () => Math.floor(Math.random() * 36).toString(36)).join('');
 
+async function sendConfirmation(phonenumber){
+    
     let response = await axios.request({
         method: 'POST',
-        url: 'https://us-central1-befake-623af.cloudfunctions.net/login',
+        // url: 'https://us-central1-befake-623af.cloudfunctions.net/login',
+        url: "https://auth.bereal.team/api/vonage/request-code",
         headers: {
-          authority: 'us-central1-befake-623af.cloudfunctions.net',
-          accept: '*/*',
-          'accept-language': 'fr',
-          'cache-control': 'no-cache',
-          'content-type': 'text/plain;charset=UTF-8',
-          dnt: '1',
-          origin: 'http://192.168.1.10:3000',
-          pragma: 'no-cache',
-          referer: 'http://192.168.1.10:3000/',
-          'sec-ch-ua': '"Not.A/Brand";v="8", "Chromium";v="114", "Brave";v="114"',
-          'sec-ch-ua-mobile': '?0',
-          'sec-ch-ua-platform': '"Windows"',
-          'sec-fetch-dest': 'empty',
-          'sec-fetch-mode': 'cors',
-          'sec-fetch-site': 'cross-site',
-          'sec-gpc': '1',
-          'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36'
+            "Accept": "*/*",
+            "User-Agent": "BeReal/8586 CFNetwork/1240.0.4 Darwin/20.6.0",
+            "x-ios-bundle-identifier": "AlexisBarreyat.BeReal",
+            "Content-Type": "application/json"
         },
-        data: '{"phoneNumber":"'+phonenumber+'"}'});
+        data: '{"phoneNumber":"'+phonenumber+'", "deviceId":"'+dId+'"}'
+    });
     
     return response.data;
 }
@@ -33,7 +24,8 @@ async function checkCode(sessionInfo, code){
 
     let response = await axios.request({
         method: 'POST',
-        url: 'https://warm-scrubland-06418.herokuapp.com/https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPhoneNumber',
+        url:"https://auth.bereal.team/api/vonage/check-code",
+        // url: 'https://warm-scrubland-06418.herokuapp.com/https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPhoneNumber',
         params: {key: 'AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA'},
         headers: {
             'Cache-Control': 'no-cache',
@@ -72,8 +64,9 @@ async function checkCode(sessionInfo, code){
 async function refreshToken(refreshToken){
     let response = await axios.request({
         method: 'POST',
-        url: 'https://warm-scrubland-06418.herokuapp.com/https://securetoken.googleapis.com/v1/token',
-        params: {key: 'AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA'},
+        // url: 'https://warm-scrubland-06418.herokuapp.com/https://securetoken.googleapis.com/v1/token',
+        url: "https://auth.bereal.team/token?grant_type=refresh_token",
+        // params: {key: 'AIzaSyDwjfEeparokD7sXPVQli9NsTuhT6fJ6iA'},
         headers: {
             'Cache-Control': 'no-cache',
             Connection: 'keep-alive',
@@ -85,7 +78,7 @@ async function refreshToken(refreshToken){
             'Sec-Fetch-Mode': 'cors',
             'Sec-Fetch-Site': 'cross-site',
             'Sec-GPC': '1',
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/114.0.0.0 Safari/537.36',
+            'User-Agent': 'BeReal/8586 CFNetwork/1240.0.4 Darwin/20.6.0',
             accept: '*/*',
             'accept-language': 'en',
             'content-type': 'application/json',
@@ -100,7 +93,8 @@ async function refreshToken(refreshToken){
         },
         data: {
             grant_type: 'refresh_token',
-            refresh_token: refreshToken
+            refresh_token: refreshToken,
+            "client_secret": "962D357B-B134-4AB6-8F53-BEA2B7255420"
         }
     });
 
